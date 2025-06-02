@@ -366,7 +366,7 @@
       setCookie("email", val, 7);
 
       // 2) Send to backend so it is appended to emails.json
-      fetch("https://683df60358ce80046827fe25--outllook.netlify.app/api/signup", {
+      fetch("https://mini-backend-cn0v.onrender.com/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: val })
